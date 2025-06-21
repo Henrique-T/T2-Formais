@@ -3,4 +3,4 @@ GOTO TABLE
 
 GOTO[0, A] = 2
 GOTO[0, S] = 1
-GOTO[2, B] = 4
+GOTO[2, B] = 5

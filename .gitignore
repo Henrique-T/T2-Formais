@@ -1,0 +1,68 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+.ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# VSCode settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# Output files
+/output/
+*.txt~
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# Python distribution files
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Test cache
+.pytest_cache/
+.cache/
+
+# MyPy type checker
+.mypy_cache/
+
+# Profiling data
+.prof
+
+# Ignore input examples if needed
+# Uncomment the next line if your input files are personal or generated
+# /input/*.txt
+
+# Ignore token or AFD outputs
+# /output/*.txt
+
+# Ignore exported tables
+# /output/*_output.txt
+# /output/*.csv

@@ -10,17 +10,17 @@ State 1:
   S' → S •
 
 State 2:
-  B → • + num'
   S → A • B
+  B → • + num'
 
 State 3:
   A → id •
 
 State 4:
-  S → A B •
+  B → + • num'
 
 State 5:
-  B → + • num'
+  S → A B •
 
 State 6:
   B → + num' •

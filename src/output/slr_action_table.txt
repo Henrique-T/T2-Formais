@@ -3,8 +3,8 @@ ACTION TABLE
 
 ACTION[0, id] = ('shift', 3)
 ACTION[1, $] = ('accept',)
-ACTION[2, +] = ('shift', 5)
+ACTION[2, +] = ('shift', 4)
 ACTION[3, +] = ('reduce', ('A', ('id',)))
-ACTION[4, $] = ('reduce', ('S', ('A', 'B')))
-ACTION[5, num'] = ('shift', 6)
+ACTION[4, num'] = ('shift', 6)
+ACTION[5, $] = ('reduce', ('S', ('A', 'B')))
 ACTION[6, $] = ('reduce', ('B', ('+', "num'")))

@@ -1,4 +1,4 @@
-from afd import AFD
+from lexer import afd
 from collections import deque, defaultdict
 
 class SyntaxTree():
@@ -238,7 +238,7 @@ def build_afd(root, followpos, leaf_positions):
         if hash_position in state:
             accept_states.add(state)
 
-    return AFD(start_state, accept_states, transitions)
+    return afd.AFD(start_state, accept_states, transitions)
 
 def find_leaf_by_position(node, pos):
     """

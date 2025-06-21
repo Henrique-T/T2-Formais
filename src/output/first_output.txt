@@ -1,0 +1,9 @@
+FIRST SETS
+===========
+
+FIRST(+) = ['+']
+FIRST(num') = ["num'"]
+FIRST(id) = ['id']
+FIRST(S) = ['id']
+FIRST(A) = ['id']
+FIRST(B) = ['+']

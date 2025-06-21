@@ -1,5 +1,5 @@
 from collections import deque
-import afd
+from lexer import afd
 
 class AFN:
     """

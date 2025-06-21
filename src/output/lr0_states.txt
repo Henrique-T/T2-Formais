@@ -1,0 +1,27 @@
+LR(0) STATES
+============
+
+State 0:
+  S' → • S
+  S → • A B
+  A → • id
+
+State 1:
+  S' → S •
+
+State 2:
+  B → • + num'
+  S → A • B
+
+State 3:
+  A → id •
+
+State 4:
+  S → A B •
+
+State 5:
+  B → + • num'
+
+State 6:
+  B → + num' •
+

@@ -1,4 +1,4 @@
-import afn
+from lexer import afn
 
 class AutomatonOperations:
     """

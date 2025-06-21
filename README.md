@@ -124,14 +124,15 @@ OUTPUT_TOKEN_LIST_FILE = "../token_list_output.txt"
 ## Example Inputs
 
 Regular Expressions (example_input_RE.txt)
-
+```
 id: [a-zA-Z]([a-zA-Z] | [0-9])*
 num: [1-9]([0-9])* | 0
 er1: a?(a | b)+
 er2: b?(a | b)+
+```
 
 Source Text (example_test_input.txt)
-
+```
 a1
 0
 teste2
@@ -143,9 +144,10 @@ aa
 bbbba
 ababab
 bbbbb
+```
 
 Grammar (example_input_grammar.txt)
-
+```
 S ::= E
 E ::= E + T
 E ::= T
@@ -153,6 +155,7 @@ T ::= T * F
 T ::= F
 F ::= ( E )
 F ::= id
+```
 
 ## Example Output
 

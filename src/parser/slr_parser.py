@@ -25,6 +25,14 @@ def load_tokens_from_file(file_path):
     Lê o arquivo token_list_output.txt e retorna uma lista de tokens no formato:
     [('a1', 'id'), ('0', 'erro!'), ...]
     """
+    TOKEN_REMAP = {
+        'plus': '+',
+        'times': '*',
+        'lpar': '(',
+        'rpar': ')',
+        # 'id' and others don't change
+    }
+
     tokens = []
     with open(file_path, 'r', encoding='utf-8') as file:
         for line in file:
@@ -39,6 +47,7 @@ def load_tokens_from_file(file_path):
 
             lexeme = parts[0].strip()
             token_type = parts[1].strip()
+            token_type = TOKEN_REMAP.get(token_type, token_type)  # remap token names
             tokens.append((lexeme, token_type))
     return tokens
 

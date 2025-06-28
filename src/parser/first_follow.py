@@ -4,9 +4,11 @@ from collections import defaultdict
 def compute_first(grammar):
     first = defaultdict(set)
 
+    # Step 1: Terminals have themselves as FIRST
     for terminal in grammar.terminals:
         first[terminal].add(terminal)
 
+    # Step 2: Initialize non-terminals
     for non_terminal in grammar.non_terminals:
         first[non_terminal] = set()
 
@@ -15,21 +17,23 @@ def compute_first(grammar):
         changed = False
 
         for lhs, rhs in grammar.productions:
-            before = len(first[lhs])
+            old_size = len(first[lhs])
 
-            if len(rhs) == 0 or rhs == ['ε']:
+            if not rhs or rhs == ['ε']:
                 first[lhs].add('ε')
             else:
+                nullable_prefix = True
                 for symbol in rhs:
                     first[lhs].update(first[symbol] - {'ε'})
-                    if 'ε' in first[symbol]:
-                        continue
-                    else:
+
+                    if 'ε' not in first[symbol]:
+                        nullable_prefix = False
                         break
-                else:
+
+                if nullable_prefix:
                     first[lhs].add('ε')
 
-            if len(first[lhs]) > before:
+            if len(first[lhs]) > old_size:
                 changed = True
 
     return dict(first)

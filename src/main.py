@@ -67,72 +67,72 @@ def main():
     log_done(OUTPUT_TOKEN_LIST_FILE)
 
 
-    # # ==============================================
-    # # Part II: build SLR Parser
-    # # ==============================================
-    # log_step("#7. Interpret grammar")
-    # grammar = Grammar()
-    # grammar.load_grammar(INPUT_GRAMMAR_FILE)
-    # grammar.print_grammar()
+    # ==============================================
+    # Part II: build SLR Parser
+    # ==============================================
+    log_step("#7. Interpret grammar")
+    grammar = Grammar()
+    grammar.load_grammar(INPUT_GRAMMAR_FILE)
+    grammar.print_grammar()
 
-    # log_step("#8. Calculate FIRST and FOLLOW sets")
-    # first = compute_first(grammar)
-    # follow = compute_follow(grammar, first)
+    log_step("#8. Calculate FIRST and FOLLOW sets")
+    first = compute_first(grammar)
+    follow = compute_follow(grammar, first)
 
-    # export_first_follow(first, follow)  # Export sets
+    export_first_follow(first, follow)  # Export sets
 
-    # log_step(" ------ FIRST ------")
-    # for symbol, values in first.items():
-    #     print(f"FIRST({symbol}) = {values}")
+    log_step(" ------ FIRST ------")
+    for symbol, values in first.items():
+        print(f"FIRST({symbol}) = {values}")
 
-    # log_step("\n ------ FOLLOW ------")
-    # for symbol, values in follow.items():
-    #     print(f"FOLLOW({symbol}) = {values}")
+    log_step("\n ------ FOLLOW ------")
+    for symbol, values in follow.items():
+        print(f"FOLLOW({symbol}) = {values}")
 
-    # log_step("\n#9. Build set of LR(0) items (Closure & Goto)")
-    # states, transitions = canonical_collection(grammar)
+    log_step("\n#9. Build set of LR(0) items (Closure & Goto)")
+    states, transitions = canonical_collection(grammar)
 
-    # export_canonical_collection(states, transitions)  # Export states and transitions
+    export_canonical_collection(states, transitions)  # Export states and transitions
 
-    # print(" ------ States (Items LR(0)) ------")
-    # for idx, state in enumerate(states):
-    #     print(f"State {idx}:")
-    #     for item in state:
-    #         lhs, rhs, dot = item
-    #         rhs_with_dot = list(rhs)
-    #         rhs_with_dot.insert(dot, '•')
-    #         print(f"  {lhs} → {' '.join(rhs_with_dot)}")
+    print(" ------ States (Items LR(0)) ------")
+    for idx, state in enumerate(states):
+        print(f"State {idx}:")
+        for item in state:
+            lhs, rhs, dot = item
+            rhs_with_dot = list(rhs)
+            rhs_with_dot.insert(dot, '•')
+            print(f"  {lhs} → {' '.join(rhs_with_dot)}")
 
-    # print(" ------ Transitions ------")
-    # for (from_state, symbol), to_state in transitions.items():
-    #     from_idx = states.index(set(from_state))
-    #     to_idx = states.index(set(to_state))
-    #     print(f"  State {from_idx} -- {symbol} --> State {to_idx}")
+    print(" ------ Transitions ------")
+    for (from_state, symbol), to_state in transitions.items():
+        from_idx = states.index(set(from_state))
+        to_idx = states.index(set(to_state))
+        print(f"  State {from_idx} -- {symbol} --> State {to_idx}")
 
-    # log_step("#10. Build SLR parsing table")
-    # action_table, goto_table = build_slr_table(grammar, states, transitions, first, follow)
+    log_step("#10. Build SLR parsing table")
+    action_table, goto_table = build_slr_table(grammar, states, transitions, first, follow)
 
-    # export_slr_table(action_table, goto_table)  # Export tables ACTION and GOTO
+    export_slr_table(action_table, goto_table)  # Export tables ACTION and GOTO
 
-    # print(" ------ ACTION Table ------")
-    # for (state, symbol), action in sorted(action_table.items()):
-    #     print(f"ACTION[{state}, {symbol}] = {action}")
+    print(" ------ ACTION Table ------")
+    for (state, symbol), action in sorted(action_table.items()):
+        print(f"ACTION[{state}, {symbol}] = {action}")
 
-    # print("\n ------ GOTO Table ------")
-    # for (state, symbol), target in sorted(goto_table.items()):
-    #     print(f"GOTO[{state}, {symbol}] = {target}")
+    print("\n ------ GOTO Table ------")
+    for (state, symbol), target in sorted(goto_table.items()):
+        print(f"GOTO[{state}, {symbol}] = {target}")
 
-    # # ==============================================
-    # # Part III: Execute Parser
-    # # ==============================================
-    # log_step("#11. Run SLR parsing")
+    # ==============================================
+    # Part III: Execute Parser
+    # ==============================================
+    log_step("#11. Run SLR parsing")
 
-    # result = slr_parse_from_file(OUTPUT_TOKEN_LIST_FILE, action_table, goto_table)
+    result = slr_parse_from_file(OUTPUT_TOKEN_LIST_FILE, action_table, goto_table)
 
-    # if result:
-    #     print("Sentence Accepted!")
-    # else:
-    #     print("Sentence Rejected!")
+    if result:
+        print("Sentence Accepted!")
+    else:
+        print("Sentence Rejected!")
 
 
 # ==============================================

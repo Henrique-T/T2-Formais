@@ -8,7 +8,7 @@ class Grammar:
         self.non_terminals = set()
         self.terminals = set()
         self.start_symbol = None
-        self.productions = []  # Lista de tuplas (lhs, rhs) onde rhs é uma lista de símbolos
+        self.productions = []  # List of tuples (lhs, rhs) where rhs is a list of symbols
 
     def load_grammar(self, filename):
         with open(filename, 'r') as file:
@@ -17,34 +17,33 @@ class Grammar:
         for line in lines:
             line = line.strip()
             if not line or line.startswith('#'):
-                continue  # Ignora linhas vazias ou comentários
+                continue  # Ignore empty lines and comments
 
-            # Parse da linha no formato: A ::= B C D
+            # Expected format: A ::= B C | D E
             if '::=' not in line:
-                raise ValueError(f"Erro de sintaxe na linha: {line}")
+                raise ValueError(f"Syntax error in line: {line}")
 
-            lhs, rhs = line.split('::=')
+            lhs, rhs_part = line.split('::=')
             lhs = lhs.strip()
-            rhs_symbols = rhs.strip().split()
+            rhs_alternatives = [alt.strip().split() for alt in rhs_part.strip().split('|')]
 
-            # Definir símbolo inicial
+            # Set start symbol
             if self.start_symbol is None:
                 self.start_symbol = lhs
 
-            # Adicionar não-terminal
+            # Register non-terminal
             self.non_terminals.add(lhs)
 
-            # Adicionar produção
-            self.productions.append((lhs, rhs_symbols))
+            # Add productions
+            for rhs in rhs_alternatives:
+                self.productions.append((lhs, rhs))
 
-        # Inferir terminais
         self._infer_terminals()
 
     def _infer_terminals(self):
         symbols_rhs = set()
         for _, rhs in self.productions:
             symbols_rhs.update(rhs)
-
         self.terminals = symbols_rhs - self.non_terminals
 
     def print_grammar(self):

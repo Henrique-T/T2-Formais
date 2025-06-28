@@ -48,7 +48,7 @@ class RegularExpression:
     
     @staticmethod
     def is_operator(c):
-        return c in {'|', '.', '*', '+', '?'}
+        return c in {'|', '.', '*', '+', '?'} and not (c.startswith('\\') and len(c) == 2)
     
     def is_operand(token):
         return (
@@ -86,17 +86,18 @@ class RegularExpression:
             return len(token) >= 3 and token[0] == '[' and token[-1] == ']'
 
         def is_literal(token):
-            return len(token) == 1 and token.isalnum()
+            return (len(token) == 1 and token.isalnum()) or token.startswith('\\')
 
         def is_operand(token):
             return (
                 is_character_class(token)
                 or is_literal(token)
                 or token == ')'
+                or (token.startswith('\\') and len(token) == 2)
             )
 
         def is_prefix(token):
-            return token in ['*', '+', '?']
+            return token in ['*', '+', '?'] or (token.startswith('\\') and token[1] in {'*', '+', '?'})
 
         def is_open_group(token):
             return token == '('
@@ -106,7 +107,14 @@ class RegularExpression:
 
         def read_token():
             nonlocal i
-            if pattern[i] == '[':
+            if pattern[i] == '\\':
+                if i + 1 < len(pattern):
+                    token = pattern[i:i+2]
+                    i += 2
+                else:
+                    token = pattern[i]
+                    i += 1
+            elif pattern[i] == '[':
                 j = i + 1
                 while j < len(pattern) and pattern[j] != ']':
                     j += 1
@@ -220,12 +228,19 @@ class RegularExpression:
         tokens = []
         i = 0
         while i < len(pattern):
-            if pattern[i] in {'(', ')', '|', '*', '+', '?', '.'}:
+            if pattern[i] == '\\':
+                if i + 1 < len(pattern):
+                    tokens.append('\\' + pattern[i + 1])  # escaped character, like '\*'
+                    i += 2
+                else:
+                    tokens.append('\\')  # lone backslash (syntax error?)
+                    i += 1
+            elif pattern[i] in {'(', ')', '|', '*', '+', '?', '.'}:
                 tokens.append(pattern[i])
                 i += 1
-            elif not pattern[i].isspace():  # skip space characters
-                tokens.append(pattern[i])  # add non-space characters to the tokens
-                i += 1               
+            elif not pattern[i].isspace():
+                tokens.append(pattern[i])
+                i += 1
             else:
                 i += 1
         return tokens

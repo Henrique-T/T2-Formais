@@ -87,28 +87,36 @@ def simulate_dfa_on_line(dfa, token_map, line):
     Returns:
         Tuple[str, str]: (line, token) if accepted; otherwise (line, "erro!")
     """
+    escaped_symbol_map = {
+        '+': r'\+',
+        '-': r'\-',
+        '*': r'\*',
+        '/': r'\/',
+        '(': r'\(',
+        ')': r'\)',
+        '[': r'\[',
+        ']': r'\]',
+        '\\': r'\\',
+    }
+
     state = dfa.start_state
     i = 0
     while i < len(line):
         symbol = line[i]
-        if symbol not in dfa.transitions.get(state, {}):
+        escaped_symbol = escaped_symbol_map.get(symbol, symbol)
+
+        if escaped_symbol not in dfa.transitions.get(state, {}):
             return (line, "erro!")
-        state = dfa.transitions[state][symbol]
+        state = dfa.transitions[state][escaped_symbol]
         i += 1
 
     if state in dfa.accept_states:
-        # If state is a frozenset of NFA states, try to find token from any substate in token_map
         substates = state if isinstance(state, frozenset) else frozenset([state])
-
         token = None
         for substate in sorted(substates):
             if substate in token_map:
                 token = token_map[substate]
                 break
-        print(f"Final state: {state}")
-        print(f"Substates in final DFA state: {sorted(substates)}")
-        print(f"Token map keys: {sorted(token_map.keys())}")
-        print(f"Resolved token: {token}")
         return (line, token or "erro!")
     else:
         return (line, "erro!")

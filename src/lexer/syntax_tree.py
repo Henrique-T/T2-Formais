@@ -23,7 +23,7 @@ class SyntaxTree():
         """Constructs the syntax tree from the postfix tokens and returns the root node."""
         position_counter = 1
         for token in self.postfix_tokens:
-            if token.isalnum() or token == '#':
+            if token == '#' or (token.startswith('\\') and len(token) == 2) or token.isalnum():
                 node = Leaf(token, position_counter)
                 self.leaf_positions[position_counter] = token  # <-- adiciona isso
                 position_counter += 1

@@ -34,7 +34,8 @@ def load_tokens_from_file(file_path):
         'times': '*',
         'lpar': '(',
         'rpar': ')',
-        # 'id' and others don't change
+        'minus': '-',
+        'div': '/',
     }
 
     tokens = []

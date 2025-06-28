@@ -2,22 +2,26 @@ from collections import defaultdict
 
 
 class SymbolTable:
-    def __init__(self):
-        self.symbols = []
+    def __init__(self, reserved_words=None):
+        self.symbols = {}  # {lexeme: (index, category)}
+        self.counter = 1
+        self.reserved_words = reserved_words or {}  # e.g., {'for': 'PR', 'if': 'PR'}
 
     def add_or_get(self, lexeme):
         if lexeme in self.symbols:
-            index = self.symbols.index(lexeme) + 1  # Começa em 1
+            return self.symbols[lexeme]  # retorna (index, category)
         else:
-            self.symbols.append(lexeme)
-            index = len(self.symbols)
-        return index
+            category = self.reserved_words.get(lexeme, 'ID')
+            self.symbols[lexeme] = (self.counter, category)
+            self.counter += 1
+            return self.symbols[lexeme]
 
     def __str__(self):
         result = "\n------ Tabela de Símbolos ------\n"
-        for idx, lex in enumerate(self.symbols, start=1):
-            result += f"{idx}: {lex}\n"
+        for lex, (idx, cat) in sorted(self.symbols.items(), key=lambda x: x[1][0]):
+            result += f"{idx}: {lex} ({cat})\n"
         return result
+
 
 
 def load_tokens_from_file(file_path):
@@ -58,6 +62,10 @@ def slr_parse_from_file(file_path, action_table, goto_table):
     """
     token_list = load_tokens_from_file(file_path)
 
+    print("Tokens loaded:")
+    for lexeme, token_type in token_list:
+        print(f"Lexeme: '{lexeme}', Token type: '{token_type}'")
+
     # Verifica erros léxicos
     error_tokens = [t for t in token_list if t[1] == 'erro!']
     if error_tokens:
@@ -94,10 +102,11 @@ def slr_parse_from_file(file_path, action_table, goto_table):
 
             # Atualiza a tabela de símbolos se for um identificador (id)
             if current_token == 'id':
-                index = symbol_table.add_or_get(lexeme)
-                output_steps.append(f"Shift <id, {index}> e vai para estado {next_state}")
+                index, category = symbol_table.add_or_get(lexeme)
+                output_steps.append(f"Shift <{lexeme}, {category}({index})> e vai para estado {next_state}")
             else:
                 output_steps.append(f"Shift '{current_token}' e vai para estado {next_state}")
+
 
             stack.append(current_token)
             stack.append(next_state)

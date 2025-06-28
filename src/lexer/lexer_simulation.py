@@ -97,12 +97,18 @@ def simulate_dfa_on_line(dfa, token_map, line):
         i += 1
 
     if state in dfa.accept_states:
-        # Token resolution: check which original substate this final DFA state includes
+        # If state is a frozenset of NFA states, try to find token from any substate in token_map
+        substates = state if isinstance(state, frozenset) else frozenset([state])
+
         token = None
-        for substate in sorted(state):
+        for substate in sorted(substates):
             if substate in token_map:
                 token = token_map[substate]
                 break
+        print(f"Final state: {state}")
+        print(f"Substates in final DFA state: {sorted(substates)}")
+        print(f"Token map keys: {sorted(token_map.keys())}")
+        print(f"Resolved token: {token}")
         return (line, token or "erro!")
     else:
         return (line, "erro!")

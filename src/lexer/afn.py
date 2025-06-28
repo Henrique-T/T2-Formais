@@ -182,19 +182,11 @@ class AFN:
         # for from_id, symbol, to_id in lexical_table:
         #     print(f"{from_id:>5} {symbol:>10} {to_id:>5}")
 
-        token_map = {}  # DFA_state_id -> token_type
+        token_map = {}  # NFA state -> token_type
 
-        for state_set in accept_states:
-            dfa_state_id = state_id_map[state_set]
-            # Pick the first matching final state in the original NFA
-            matched_token_types = [
-                self.token_types[s]
-                for s in state_set
-                if s in self.final_states and s in self.token_types
-            ]
-            if matched_token_types:
-                # Prioritize by order (e.g., for longest match or precedence)
-                token_map[dfa_state_id] = matched_token_types[0]
+        for nfa_state in self.final_states:
+            if nfa_state in self.token_types:
+                token_map[nfa_state] = self.token_types[nfa_state]
 
         return afd.AFD(
             start_state=start_closure,

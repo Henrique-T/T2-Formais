@@ -17,7 +17,7 @@ class SyntaxTree():
     def __init__(self, postfix_tokens):
         self.stack = []
         self.postfix_tokens = postfix_tokens
-        self.leaf_positions = {}  # Mapeia posição -> símbolo
+        self.leaf_positions = {}  # maps position -> symbol
 
     def build_syntax_tree(self):
         """Constructs the syntax tree from the postfix tokens and returns the root node."""
@@ -25,7 +25,7 @@ class SyntaxTree():
         for token in self.postfix_tokens:
             if token == '#' or (token.startswith('\\') and len(token) == 2) or token.isalnum():
                 node = Leaf(token, position_counter)
-                self.leaf_positions[position_counter] = token  # <-- adiciona isso
+                self.leaf_positions[position_counter] = token
                 position_counter += 1
                 self.stack.append(node)
             elif token in ['*', '+', '?']:

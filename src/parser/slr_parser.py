@@ -9,7 +9,7 @@ class SymbolTable:
 
     def add_or_get(self, lexeme):
         if lexeme in self.symbols:
-            return self.symbols[lexeme]  # retorna (index, category)
+            return self.symbols[lexeme]  # return (index, category)
         else:
             category = self.reserved_words.get(lexeme, 'ID')
             self.symbols[lexeme] = (self.counter, category)
@@ -17,7 +17,7 @@ class SymbolTable:
             return self.symbols[lexeme]
 
     def __str__(self):
-        result = "\n------ Tabela de Símbolos ------\n"
+        result = "\n------ Symbol Table ------\n"
         for lex, (idx, cat) in sorted(self.symbols.items(), key=lambda x: x[1][0]):
             result += f"{idx}: {lex} ({cat})\n"
         return result
@@ -26,7 +26,7 @@ class SymbolTable:
 
 def load_tokens_from_file(file_path):
     """
-    Lê o arquivo token_list_output.txt e retorna uma lista de tokens no formato:
+    Read file token_list_output.txt and returns a list of tokens in the following format:
     [('a1', 'id'), ('0', 'erro!'), ...]
     """
     TOKEN_REMAP = {
@@ -43,12 +43,12 @@ def load_tokens_from_file(file_path):
         for line in file:
             line = line.strip()
             if not line or not line.startswith('<') or not line.endswith('>'):
-                continue  # Ignora linhas inválidas
-            content = line[1:-1]  # Remove os <>
+                continue  # ignore invalid lines
+            content = line[1:-1]  # Remove <>
             parts = content.split(',')
 
             if len(parts) != 2:
-                continue  # Linha mal formatada, ignora
+                continue  # ignore poorly formatted lines
 
             lexeme = parts[0].strip()
             token_type = parts[1].strip()
@@ -59,7 +59,7 @@ def load_tokens_from_file(file_path):
 
 def slr_parse_from_file(file_path, action_table, goto_table):
     """
-    Executa o parser SLR lendo tokens do arquivo e atualiza a tabela de símbolos.
+    Execute SLR parser reading tokens from file and updates symbol table.
     """
     token_list = load_tokens_from_file(file_path)
 
@@ -70,13 +70,13 @@ def slr_parse_from_file(file_path, action_table, goto_table):
     # Verifica erros léxicos
     error_tokens = [t for t in token_list if t[1] == 'erro!']
     if error_tokens:
-        print("Erro léxico encontrado! Tokens inválidos:")
+        print("Lexical error found! Invalid tokens:")
         for lexeme, _ in error_tokens:
             print(f"  -> {lexeme}")
         print("Sentence rejected!")
         return False
 
-    input_tokens = token_list + [('$', '$')]  # Adiciona EOF
+    input_tokens = token_list + [('$', '$')]  # Adds EOF
 
     stack = [0]
     pointer = 0
@@ -87,14 +87,14 @@ def slr_parse_from_file(file_path, action_table, goto_table):
 
     while True:
         state = stack[-1]
-        current_token = input_tokens[pointer][1]  # padrão do token ('id', '+', 'num', etc.)
-        lexeme = input_tokens[pointer][0]         # lexema ('a1', '+', '21', etc.)
+        current_token = input_tokens[pointer][1]  # Token pattern ('id', '+', 'num', etc.)
+        lexeme = input_tokens[pointer][0]         # lexeme ('a1', '+', '21', etc.)
 
         action = action_table.get((state, current_token))
 
         if action is None:
-            print(f"Erro de sintaxe! Nenhuma ação para (state {state}, token '{current_token}').")
-            print("Sentença rejeitada!")
+            print(f"Syntax error! No actions for (state {state}, token '{current_token}').")
+            print("Sentence Rejected!")
             print(symbol_table)
             return False
 
@@ -104,9 +104,9 @@ def slr_parse_from_file(file_path, action_table, goto_table):
             # Atualiza a tabela de símbolos se for um identificador (id)
             if current_token == 'id':
                 index, category = symbol_table.add_or_get(lexeme)
-                output_steps.append(f"Shift <{lexeme}, {category}({index})> e vai para estado {next_state}")
+                output_steps.append(f"Shift <{lexeme}, {category}({index})> and goes to state {next_state}")
             else:
-                output_steps.append(f"Shift '{current_token}' e vai para estado {next_state}")
+                output_steps.append(f"Shift '{current_token}' and goes to state {next_state}")
 
 
             stack.append(current_token)
@@ -122,23 +122,23 @@ def slr_parse_from_file(file_path, action_table, goto_table):
             stack.append(lhs)
             goto_state = goto_table.get((state, lhs))
             if goto_state is None:
-                print(f"Erro de goto! Nenhuma transição para (state {state}, não-terminal '{lhs}').")
-                print("Sentença rejeitada!")
+                print(f"Goto error! no transition for (state {state}, non-terminal '{lhs}').")
+                print("Sentence rejected!")
                 print(symbol_table)
                 return False
             stack.append(goto_state)
             output_steps.append(f"Reduce por {lhs} → {' '.join(rhs)}")
 
         elif action[0] == 'accept':
-            output_steps.append("Aceita a entrada! 🎉")
+            output_steps.append("Accepts input!")
             for step in output_steps:
                 print(step)
-            print("\nSentença aceita!")
+            print("\Sentence accepted!")
             print(symbol_table)
             return True
 
         else:
-            print(f"Ação desconhecida: {action}")
-            print("Sentença rejeitada!")
+            print(f"Unknown action: {action}")
+            print("Sentence rejected!")
             print(symbol_table)
             return False

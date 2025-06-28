@@ -59,8 +59,6 @@ def main():
     log_step("#5. Union with epsilon transitions")
     union_afn = reduce(lambda a1, a2: ao.AutomatonOperations.union(a1, a2), afns)
     afd, token_map = union_afn.to_afd()
-    print("AFD AND TOKEN MAP: \n")
-    print(afd, token_map)
 
     log_step("#6. Lexer Analysis")
     ls.run_lexer(afd, token_map, INPUT_USER_FILE, OUTPUT_TOKEN_LIST_FILE)
@@ -94,33 +92,33 @@ def main():
 
     export_canonical_collection(states, transitions)  # Export states and transitions
 
-    print(" ------ States (Items LR(0)) ------")
+    log_step(" ------ States (Items LR(0)) ------")
     for idx, state in enumerate(states):
-        print(f"State {idx}:")
+        log_step(f"State {idx}:")
         for item in state:
             lhs, rhs, dot = item
             rhs_with_dot = list(rhs)
             rhs_with_dot.insert(dot, '•')
-            print(f"  {lhs} → {' '.join(rhs_with_dot)}")
+            log_step(f"  {lhs} → {' '.join(rhs_with_dot)}")
 
-    print(" ------ Transitions ------")
+    log_step(" ------ Transitions ------")
     for (from_state, symbol), to_state in transitions.items():
         from_idx = states.index(set(from_state))
         to_idx = states.index(set(to_state))
-        print(f"  State {from_idx} -- {symbol} --> State {to_idx}")
+        log_step(f"  State {from_idx} -- {symbol} --> State {to_idx}")
 
     log_step("#10. Build SLR parsing table")
     action_table, goto_table = build_slr_table(grammar, states, transitions, first, follow)
 
     export_slr_table(action_table, goto_table)  # Export tables ACTION and GOTO
 
-    print(" ------ ACTION Table ------")
+    log_step(" ------ ACTION Table ------")
     for (state, symbol), action in sorted(action_table.items()):
-        print(f"ACTION[{state}, {symbol}] = {action}")
+        log_step(f"ACTION[{state}, {symbol}] = {action}")
 
-    print("\n ------ GOTO Table ------")
+    log_step("\n ------ GOTO Table ------")
     for (state, symbol), target in sorted(goto_table.items()):
-        print(f"GOTO[{state}, {symbol}] = {target}")
+        log_step(f"GOTO[{state}, {symbol}] = {target}")
 
     # ==============================================
     # Part III: Execute Parser

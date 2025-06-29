@@ -1,9 +1,0 @@
-FIRST SETS
-===========
-
-FIRST(+) = ['+']
-FIRST(num') = ["num'"]
-FIRST(id) = ['id']
-FIRST(S) = ['id']
-FIRST(B) = ['+']
-FIRST(A) = ['id']

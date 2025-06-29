@@ -84,7 +84,7 @@ def compute_follow(grammar, first):
     return dict(follow)
 
 
-def export_first_follow(first, follow, first_file="./output/first_output.txt", follow_file="./output/follow_output.txt"):
+def export_first_follow(first, follow, first_file, follow_file):
     """
     Export FIRST and FOLLOW sets to separate text files for inspection.
     """
@@ -92,10 +92,8 @@ def export_first_follow(first, follow, first_file="./output/first_output.txt", f
         f.write("FIRST SETS\n===========\n\n")
         for symbol, values in first.items():
             f.write(f"FIRST({symbol}) = {sorted(values)}\n")
-    print(f"FIRST saved to {first_file}")
 
     with open(follow_file, 'w', encoding='utf-8') as f:
         f.write("FOLLOW SETS\n============\n\n")
         for symbol, values in follow.items():
             f.write(f"FOLLOW({symbol}) = {sorted(values)}\n")
-    print(f"FOLLOW saved to {follow_file}")

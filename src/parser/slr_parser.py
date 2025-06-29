@@ -63,9 +63,9 @@ def slr_parse_from_file(file_path, action_table, goto_table):
     """
     token_list = load_tokens_from_file(file_path)
 
-    print("Tokens loaded:")
-    for lexeme, token_type in token_list:
-        print(f"Lexeme: '{lexeme}', Token type: '{token_type}'")
+    # print("Tokens loaded:")
+    # for lexeme, token_type in token_list:
+    #     print(f"Lexeme: '{lexeme}', Token type: '{token_type}'")
 
     # Verifica erros léxicos
     error_tokens = [t for t in token_list if t[1] == 'erro!']
@@ -91,9 +91,6 @@ def slr_parse_from_file(file_path, action_table, goto_table):
 }
     symbol_table = SymbolTable(reserved_words=reserved_words)
 
-
-    print("\n#11. Parse SLR tables\n")
-
     while True:
         state = stack[-1]
         current_token = input_tokens[pointer][1]  # Token pattern ('id', '+', 'num', etc.)
@@ -110,18 +107,9 @@ def slr_parse_from_file(file_path, action_table, goto_table):
         if action[0] == 'shift':
             next_state = action[1]
 
-            # # Atualiza a tabela de símbolos se for um identificador (id)
-            # if current_token == 'id':
-            #     index, category = symbol_table.add_or_get(lexeme)
-            #     output_steps.append(f"Shift <{lexeme}, {category}({index})> and goes to state {next_state}")
-            # else:
-            #     output_steps.append(f"Shift '{current_token}' and goes to state {next_state}")
-            # Atualiza a tabela de símbolos para qualquer lexema, usando palavras reservadas
-            
+            # Updates symbol table for any lexeme
             index, category = symbol_table.add_or_get(lexeme)
             output_steps.append(f"Shift <{lexeme}, {category}({index})> and goes to state {next_state}")
-
-
 
             stack.append(current_token)
             stack.append(next_state)
@@ -145,9 +133,7 @@ def slr_parse_from_file(file_path, action_table, goto_table):
 
         elif action[0] == 'accept':
             output_steps.append("Accepts input!")
-            for step in output_steps:
-                print(step)
-            print("\Sentence accepted!")
+            print("Sentence accepted!")
             print(symbol_table)
             return True
 

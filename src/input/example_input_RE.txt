@@ -1,1 +1,4 @@
-id: [a-zA-Z]([a-zA-Z] | [0-9])*
+for: for
+if: if
+else: else
+id: [a-zA-Z][a-zA-Z0-9]*

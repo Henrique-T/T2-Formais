@@ -1,9 +1,0 @@
-TRANSITIONS
-===========
-
-  State 0 -- S --> State 1
-  State 0 -- A --> State 2
-  State 0 -- id --> State 3
-  State 2 -- + --> State 4
-  State 2 -- B --> State 5
-  State 4 -- num' --> State 6

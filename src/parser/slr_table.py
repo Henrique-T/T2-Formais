@@ -49,8 +49,8 @@ def build_slr_table(grammar, states, transitions, first, follow):
 
 
 def export_slr_table(action_table, goto_table,
-                     action_file="./output/slr_action_table.txt",
-                     goto_file="./output/slr_goto_table.txt"):
+                     action_file,
+                     goto_file):
     """
     Exports the ACTION and GOTO tables to human-readable text files.
 
@@ -64,10 +64,8 @@ def export_slr_table(action_table, goto_table,
         f.write("ACTION TABLE\n============\n\n")
         for (state, symbol), action in sorted(action_table.items()):
             f.write(f"ACTION[{state}, {symbol}] = {action}\n")
-    print(f"ACTION Table saved to {action_file}")
 
     with open(goto_file, 'w', encoding='utf-8') as f:
         f.write("GOTO TABLE\n==========\n\n")
         for (state, symbol), target in sorted(goto_table.items()):
             f.write(f"GOTO[{state}, {symbol}] = {target}\n")
-    print(f"GOTO Table saved to {goto_file}")

@@ -1,6 +1,0 @@
-FOLLOW SETS
-============
-
-FOLLOW(S) = ['$']
-FOLLOW(B) = ['$']
-FOLLOW(A) = ['+']

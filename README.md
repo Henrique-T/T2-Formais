@@ -1,6 +1,10 @@
-# Regular Expression to AFD Converter and Lexer
+# Regular Expression to AFD Converter, Lexer, and SLR Parser
 
-This project parses regular expressions, constructs their deterministic finite automata (AFDs), performs lexical analysis over input text, and builds an **SLR parser** that validates the syntactic structure of the tokenized input based on a context-free grammar (CFG).
+This project performs **lexical and syntactic analysis** for a source input file using:
+
+- Regular Expressions → Syntax Tree → AFD
+- Lexer to tokenize source code
+- SLR Parser to check syntactic validity via a context-free grammar (CFG)
 
 ---
 
@@ -14,7 +18,23 @@ python main.py
 
 Python 3.8+ is recommended.
 
-## Input Files
+# Mode selection
+The behavior of the program is controlled by the variable ONLY_PARSER_MODE located in main.py:
+```
+ONLY_PARSER_MODE = False  # Full lexer + parser pipeline
+ONLY_PARSER_MODE = True   # Only run the SLR parser from token_list_output.txt
+
+```
+## Full Pipeline Mode (False)
+Runs from scratch: converts regex → builds AFDs → lexes source text → builds parsing table → parses.
+
+## Parser-Only Mode (True)
+Skips lexical analysis and uses the pre-existing file:
+```
+./output/token_list_output.txt
+```
+
+# Input Files
 These files must exist before running the program:
 
 1. ./input/example_input_RE.txt – contains regular expression definitions, 
@@ -33,7 +53,7 @@ INPUT_USER_FILE = "../example_test_input.txt"
 INPUT_GRAMMAR_FILE = "./input/example_input_grammar.txt"
 ```
 
-## Output files
+# Output files
 The following files are generated automatically:
 
 1. ./output/afd_output_{i}.txt – AFD representation for the i-th regular expression
@@ -58,139 +78,184 @@ Global output file variable in main.py:
 OUTPUT_TOKEN_LIST_FILE = "../token_list_output.txt"
 ```
 
-## Process Overview
+# Process Overview
 
-### Read and Parse Regular Expressions
-    Parses each line of example_input_RE.txt into a RegularExpression object.
-    No output for this step.
+## Phase 1: Lexical Analysis (skipped if ONLY_PARSER_MODE = True)
 
-### Convert to Postfix Notation
-    Converts each regular expression to postfix.
-    No output for this step. (Optional print available in code.)
+1. Parse Regular Expressions
+    Converts each line of example_input_RE.txt into a syntax tree.
 
-### Build Syntax Tree
-    Constructs a syntax tree from the postfix expression.
-    No output for this step. (Optional print available.)
+2. Build AFDs and Merge Them
+    Each regex → AFD → merged into a single AFD with ε-transitions.
 
-### Compute Tree Properties
-    Calculates nullable, firstpos, lastpos, and followpos for the tree.
-    No output for this step. (Optional print available.)
+3. Run Lexer
+    Tokenizes example_test_input.txt into token_list_output.txt.
 
-### Build AFD
-    Converts the syntax tree into a deterministic finite automaton (AFD).
-    Output: afd_output_{i}.txt
+## Phase 2: Syntactic Analysis
 
-### Create Union of AFDs
-    Unifies all individual AFDs into one.
-    No direct output for this. (Optional print available.)
+4. Load Grammar
+    CFG is read from example_input_grammar.txt.
 
-### Run Lexer
-    Tokenizes the input source using the unified AFD.
-    Output: token_list_output.txt
+5. Compute FIRST and FOLLOW Sets
+    Saves to first_output.txt and follow_output.txt.
 
+6. Build LR(0) Item Sets
+    Closure and goto operations → lr0_states.txt, lr0_transitions.txt.
 
-### Read and Interpret Grammar
-    Reads CFG from example_input_grammar.txt.
+7. Build SLR Table
+    ACTION and GOTO tables built → slr_action_table.txt, slr_goto_table.txt.
 
-### Compute FIRST and FOLLOW Sets
-    Output:
+8. SLR Parsing
+    Parses the token list and prints:
 
-        first_output.txt
+    - Sentence Accepted!
 
-        follow_output.txt
-
-### Build Canonical Collection (LR(0) Items)
-    Computes closure and goto for LR(0) items.
-    Output:
-
-        lr0_states.txt
-
-        lr0_transitions.txt
-
-### Build SLR Parsing Table
-    Creates ACTION and GOTO tables using the canonical collection and FOLLOW sets.
-    Output:
-
-        slr_action_table.txt
-
-        slr_goto_table.txt
-
-### Execute Parsing Process
-    Runs the parser against the token list (token_list_output.txt).
-    Prints on console whether the input is syntactically accepted (Sentence Accepted!) or rejected (Sentence Rejected!).
+    - Sentence Rejected!
 
 
-
-## Example Inputs
+# Example Inputs
 
 Regular Expressions (example_input_RE.txt)
 ```
-id: [a-zA-Z]([a-zA-Z] | [0-9])*
-num: [1-9]([0-9])* | 0
-er1: a?(a | b)+
-er2: b?(a | b)+
+for: for
+if: if
+else: else
+id: [a-zA-Z][a-zA-Z0-9]*
 ```
 
 Source Text (example_test_input.txt)
 ```
-a1
-0
-teste2
-21
-alpha123
-3444
-a43teste
-aa
-bbbba
-ababab
-bbbbb
+for 
+x 
+if 
+y 
+else 
+z
 ```
 
 Grammar (example_input_grammar.txt)
 ```
-S ::= E
-E ::= E + T
-E ::= T
-T ::= T * F
-T ::= F
-F ::= ( E )
-F ::= id
+S ::= for E
+S ::= if E else E
+S ::= id
+E ::= id
 ```
 
 ## Example Output
 
 ```
-Starting regular expression to AFD conversion...
+C:\Users\samsung\Desktop\Formais\T2-Formais\src>python main.py
 
-Parsing regEx 1: id: [a-zA-Z]([a-zA-Z] | [0-9])*
+ Starting regular expression to AFD conversion...
 
-#1. Tokenize and create postfix format for regular expression
-#2. Build syntax tree
-#3. Computing nullable, firstpos, lastpos, and followpos
-#4. Build AFD
-File saved: ./output/afd_output_0.txt
 
-...
+      Parsing regEx 1: for: for
 
-#5. Union with epsilon transitions
-#6. Lexer Analysis
-File saved: ./output/token_list_output.txt
 
-#7. Interpret grammar
-#8. Calculate FIRST and FOLLOW sets
-File saved: ./output/first_output.txt
-File saved: ./output/follow_output.txt
+      Parsing regEx 2: if: if
 
-#9. Build set of LR(0) items (Closure & Goto)
-File saved: ./output/lr0_states.txt
-File saved: ./output/lr0_transitions.txt
 
-#10. Build SLR parsing table
-File saved: ./output/slr_action_table.txt
-File saved: ./output/slr_goto_table.txt
+      Parsing regEx 3: else: else
 
-#11. Run SLR parsing
+
+      Parsing regEx 4: id: [a-zA-Z][a-zA-Z0-9]*
+
+
+ #1. Tokenize and create postfix format for regular expression
+
+
+ #2. Build syntax tree
+
+
+ #3. Computing nullable, firstpos, lastpos, and followpos
+
+
+ #4. Build AFD
+
+ File saved: ./output/afd_output_0.txt
+
+
+ #1. Tokenize and create postfix format for regular expression
+
+
+ #2. Build syntax tree
+
+
+ #3. Computing nullable, firstpos, lastpos, and followpos
+
+
+ #4. Build AFD
+
+ File saved: ./output/afd_output_1.txt
+
+
+ #1. Tokenize and create postfix format for regular expression
+
+
+ #2. Build syntax tree
+
+
+ #3. Computing nullable, firstpos, lastpos, and followpos
+
+
+ #4. Build AFD
+
+ File saved: ./output/afd_output_2.txt
+
+
+ #1. Tokenize and create postfix format for regular expression
+
+
+ #2. Build syntax tree
+
+
+ #3. Computing nullable, firstpos, lastpos, and followpos
+
+
+ #4. Build AFD
+
+ File saved: ./output/afd_output_3.txt
+
+
+ #5. Union with epsilon transitions
+
+
+ #6. Lexer Analysis
+
+ File saved: ./output/token_list_output.txt
+
+
+ #7. Interpret grammar
+
+
+ #8. Calculate FIRST and FOLLOW sets
+
+ File saved: ./output/first_output.txt
+
+ File saved: ./output/follow_output.txt
+
+
+ #9. Build set of LR(0) items (Closure & Goto)
+
+ File saved: ./output/lr0_states.txt
+
+ File saved: ./output/lr0_transitions.txt
+
+
+ #10. Build SLR parsing table
+
+ File saved: ./output/slr_action_table.txt
+
+ File saved: ./output/slr_goto_table.txt
+
+
+ #11. Run SLR parsing
+
+Sentence accepted!
+
+------ Symbol Table ------
+1: for (PR)
+2: x (ID)
+
 Sentence Accepted!
-
-
 ```

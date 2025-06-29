@@ -1,3 +1,4 @@
-S ::= A B
-A ::= id
-B ::= + num'
+S ::= for E
+S ::= if E else E
+S ::= id
+E ::= id

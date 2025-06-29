@@ -127,8 +127,8 @@ def canonical_collection(grammar):
 
 
 def export_canonical_collection(states, transitions,
-                                states_file="./output/lr0_states.txt",
-                                transitions_file="./output/lr0_transitions.txt"):
+                                states_file,
+                                transitions_file):
     """
     Exports the canonical LR(0) states and transitions to text files.
 
@@ -148,7 +148,6 @@ def export_canonical_collection(states, transitions,
                 rhs_with_dot.insert(dot, '•')  # Insert the dot in the correct position
                 f.write(f"  {lhs} → {' '.join(rhs_with_dot)}\n")
             f.write("\n")
-    print(f"States saved to {states_file}")
 
     with open(transitions_file, 'w', encoding='utf-8') as f:
         f.write("TRANSITIONS\n===========\n\n")
@@ -156,4 +155,3 @@ def export_canonical_collection(states, transitions,
             from_idx = states.index(set(from_state))
             to_idx = states.index(set(to_state))
             f.write(f"  State {from_idx} -- {symbol} --> State {to_idx}\n")
-    print(f"Transitions saved to {transitions_file}")

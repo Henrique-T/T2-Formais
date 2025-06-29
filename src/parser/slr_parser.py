@@ -81,7 +81,16 @@ def slr_parse_from_file(file_path, action_table, goto_table):
     stack = [0]
     pointer = 0
     output_steps = []
-    symbol_table = SymbolTable()
+    
+    reserved_words = {
+    'for': 'PR',
+    'if': 'PR',
+    'else': 'PR',
+    'while': 'PR',
+    'return': 'PR'
+}
+    symbol_table = SymbolTable(reserved_words=reserved_words)
+
 
     print("\n#11. Parse SLR tables\n")
 
@@ -101,12 +110,17 @@ def slr_parse_from_file(file_path, action_table, goto_table):
         if action[0] == 'shift':
             next_state = action[1]
 
-            # Atualiza a tabela de símbolos se for um identificador (id)
-            if current_token == 'id':
-                index, category = symbol_table.add_or_get(lexeme)
-                output_steps.append(f"Shift <{lexeme}, {category}({index})> and goes to state {next_state}")
-            else:
-                output_steps.append(f"Shift '{current_token}' and goes to state {next_state}")
+            # # Atualiza a tabela de símbolos se for um identificador (id)
+            # if current_token == 'id':
+            #     index, category = symbol_table.add_or_get(lexeme)
+            #     output_steps.append(f"Shift <{lexeme}, {category}({index})> and goes to state {next_state}")
+            # else:
+            #     output_steps.append(f"Shift '{current_token}' and goes to state {next_state}")
+            # Atualiza a tabela de símbolos para qualquer lexema, usando palavras reservadas
+            
+            index, category = symbol_table.add_or_get(lexeme)
+            output_steps.append(f"Shift <{lexeme}, {category}({index})> and goes to state {next_state}")
+
 
 
             stack.append(current_token)
